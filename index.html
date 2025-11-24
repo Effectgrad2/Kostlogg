@@ -45,7 +45,7 @@
 
 <h2>Logga måltid</h2>
 
-<!-- Snabbknappar mappade till KODNAMN från Receptbank -->
+<!-- Snabbknappar -->
 <div class="quick-buttons">
   <button type="button" onclick="submitRecipe('proteinshake')">🥤 proteinshake</button>
   <button type="button" onclick="submitRecipe('kycklingsallad')">🥗 kycklingsallad</button>
@@ -54,29 +54,37 @@
   <button type="button" onclick="submitRecipe('2 ägg')">🥚🥚 2 ägg</button>
 </div>
 
-<form id="myForm" action="DIN_WEBHOOK_URL_HÄR" method="POST">
-  <textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
-  <button type="submit">Logga</button>
-</form>
+<textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
+<button onclick="sendMeal()">Logga</button>
 
 <div id="msg">✔️ Måltid loggad!</div>
 
 <script>
 
-  // Funktion när man trycker snabbknapp
-  function submitRecipe(code) {
-    document.getElementById('mealInput').value = '@' + code;
-    document.getElementById('myForm').submit();
-  }
+const webhookURL = "https://hook.eu1.make.com/vrjzc3t5peepxuhbn8s4lm6ge8styvqi";
 
-  // Auto-reset och feedback när formuläret skickas
-  document.getElementById('myForm').addEventListener('submit', function(e) {
-    setTimeout(() => {
-      document.getElementById('mealInput').value = '';
-      document.getElementById('msg').style.display = "block";
-      setTimeout(() => document.getElementById('msg').style.display = "none", 2000);
-    }, 500);
-  });
+function showMessage() {
+  document.getElementById('msg').style.display = "block";
+  setTimeout(() => document.getElementById('msg').style.display = "none", 2000);
+}
+
+function sendMeal() {
+  const meal = document.getElementById('mealInput').value;
+  fetch(webhookURL, {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: "meal=" + encodeURIComponent(meal)
+  })
+  .then(() => {
+    document.getElementById('mealInput').value = '';
+    showMessage();
+  })
+}
+
+function submitRecipe(code) {
+  document.getElementById('mealInput').value = '@' + code;
+  sendMeal();
+}
 
 </script>
 
