@@ -65,9 +65,10 @@
 
   // Funktion när man trycker snabbknapp
   function submitRecipe(code) {
-    document.getElementById('mealInput').value = '@' + code;
-    document.getElementById('myForm').submit();
-  }
+    const field = document.getElementById('mealInput');
+    field.value = '@' + code;
+}
+
 
   // Auto-reset och feedback när formuläret skickas
   document.getElementById('myForm').addEventListener('submit', function(e) {
@@ -82,6 +83,7 @@
 
 </body>
 </html>
+
 
 
 
