@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <title>Logga måltid</title>
+</head>
+<body>
+  <h1>Logga måltid</h1>
+  <form action="https://hook.eu1.make.com/vrjzc3t5peepxuhbn8s4lm6ge8styvqi" method="get">
+    <label for="text">Beskriv måltiden:</label><br>
+    <textarea id="text" name="text" rows="4" cols="40"
+      placeholder="t.ex. Frukost 07:30, 3 ägg och 1 kaffe"></textarea><br><br>
+    <button type="submit">Skicka till loggen</button>
+  </form>
+</body>
+</html>
