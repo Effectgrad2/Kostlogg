@@ -55,7 +55,7 @@
 </div>
 
 <textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
-<button onclick="sendMeal()">Logga</button>
+<button type="button" onclick="sendMeal()">Logga</button>
 
 <div id="msg">✔️ Måltid loggad!</div>
 
@@ -69,16 +69,16 @@ function showMessage() {
 }
 
 function sendMeal() {
-  const meal = document.getElementById('mealInput').value;
+  const meal = document.getElementById('mealInput').value.trim();
+  if (meal === "") return;
   fetch(webhookURL, {
     method: "POST",
     headers: {"Content-Type": "application/x-www-form-urlencoded"},
     body: "meal=" + encodeURIComponent(meal)
-  })
-  .then(() => {
-    document.getElementById('mealInput').value = '';
+  }).then(() => {
+    document.getElementById('mealInput').value = "";
     showMessage();
-  })
+  });
 }
 
 function submitRecipe(code) {
