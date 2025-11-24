@@ -1,16 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="utf-8" />
-  <title>Logga måltid</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matlogg</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+  }
+  input, textarea {
+    width: 100%;
+    font-size: 20px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  button {
+    width: 100%;
+    font-size: 22px;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    background-color: #007AFF; /* iPhone blå */
+  }
+  button:active {
+    background-color: #005BBB;
+  }
+</style>
 </head>
 <body>
-  <h1>Logga måltid</h1>
-  <form action="https://hook.eu1.make.com/vrjzc3t5peepxuhbn8s4lm6ge8styvqi" method="get">
-    <label for="text">Beskriv måltiden:</label><br>
-    <textarea id="text" name="text" rows="4" cols="40"
-      placeholder="t.ex. Frukost 07:30, 3 ägg och 1 kaffe"></textarea><br><br>
-    <button type="submit">Skicka till loggen</button>
-  </form>
+
+<h2>Logga måltid</h2>
+
+<form action="DIN_WEBHOOK_URL_HÄR" method="POST">
+  <textarea name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
+  <button type="submit">Logga</button>
+</form>
+
 </body>
 </html>
