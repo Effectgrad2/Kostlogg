@@ -9,7 +9,7 @@
     font-family: sans-serif;
     padding: 20px;
   }
-  input, textarea {
+  textarea {
     width: 100%;
     font-size: 20px;
     padding: 12px;
@@ -24,10 +24,20 @@
     border-radius: 8px;
     border: none;
     color: white;
-    background-color: #007AFF; /* iPhone blå */
+    background-color: #007AFF;
+    margin-bottom: 10px;
   }
-  button:active {
-    background-color: #005BBB;
+  .quick-buttons button {
+    background-color: #34C759;
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+  #msg {
+    font-size: 18px;
+    color: green;
+    padding: 10px 0;
+    display: none;
   }
 </style>
 </head>
@@ -35,10 +45,40 @@
 
 <h2>Logga måltid</h2>
 
-<form action="DIN_WEBHOOK_URL_HÄR" method="POST">
-  <textarea name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
+<!-- Snabbknappar mappade till KODNAMN från Receptbank -->
+<div class="quick-buttons">
+  <button type="button" onclick="submitRecipe('proteinshake')">🥤 proteinshake</button>
+  <button type="button" onclick="submitRecipe('kycklingsallad')">🥗 kycklingsallad</button>
+  <button type="button" onclick="submitRecipe('mango')">🥭 mango</button>
+  <button type="button" onclick="submitRecipe('avokado')">🥑 avokado</button>
+  <button type="button" onclick="submitRecipe('2 ägg')">🥚🥚 2 ägg</button>
+</div>
+
+<form id="myForm" action="DIN_WEBHOOK_URL_HÄR" method="POST">
+  <textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
   <button type="submit">Logga</button>
 </form>
+
+<div id="msg">✔️ Måltid loggad!</div>
+
+<script>
+
+  // Funktion när man trycker snabbknapp
+  function submitRecipe(code) {
+    document.getElementById('mealInput').value = '@' + code;
+    document.getElementById('myForm').submit();
+  }
+
+  // Auto-reset och feedback när formuläret skickas
+  document.getElementById('myForm').addEventListener('submit', function(e) {
+    setTimeout(() => {
+      document.getElementById('mealInput').value = '';
+      document.getElementById('msg').style.display = "block";
+      setTimeout(() => document.getElementById('msg').style.display = "none", 2000);
+    }, 500);
+  });
+
+</script>
 
 </body>
 </html>
