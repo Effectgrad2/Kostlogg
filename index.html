@@ -1,93 +1,205 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Matlogg</title>
-<style>
-  body {
-    font-family: sans-serif;
-    padding: 20px;
-  }
-  textarea {
-    width: 100%;
-    font-size: 20px;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  button {
-    width: 100%;
-    font-size: 22px;
-    padding: 14px;
-    border-radius: 8px;
-    border: none;
-    color: white;
-    background-color: #007AFF;
-    margin-bottom: 10px;
-  }
-  .quick-buttons button {
-    background-color: #34C759;
-    font-size: 18px;
-    padding: 10px;
-    margin-bottom: 6px;
-  }
-  #msg {
-    font-size: 18px;
-    color: green;
-    padding: 10px 0;
-    display: none;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matlogg</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 16px 32px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 4px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 14px 14px 18px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+      border: 1px solid rgba(148,163,184,0.3);
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 1rem;
+      padding: 10px 12px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: #020617;
+      color: #f9fafb;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.4);
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 4px;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg,#38bdf8,#6366f1);
+      color: #f9fafb;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.4);
+    }
+
+    .primary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 6px 14px rgba(37,99,235,0.35);
+    }
+
+    .quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .quick-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: #020617;
+      color: #e5e7eb;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .quick-btn span {
+      font-size: 1rem;
+    }
+
+    .quick-btn:hover {
+      border-color: #38bdf8;
+    }
+
+    #msg {
+      font-size: 0.85rem;
+      color: #4ade80;
+      padding: 6px 0 0;
+      display: none;
+    }
+
+    .footer {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Logga måltid</h2>
+  <div class="app">
+    <h1>Logga måltid</h1>
+    <div class="subtitle">Snabbknappar eller fritext – skickas till din kostlogg</div>
 
-<!-- Snabbknappar -->
-<div class="quick-buttons">
-  <button type="button" onclick="submitRecipe('sallad2000')">🥗 Sallad 2000</button>
-  <button type="button" onclick="submitRecipe('proteinkaka')">🍰 Proteinkaka</button>
-  <button type="button" onclick="submitRecipe('keso/kvargfrukost')">🥣 Keso/Kvarg-frukost</button>
-</div>
+    <div class="card">
+      <!-- Snabbknappar -->
+      <div class="quick-buttons">
+        <button type="button" class="quick-btn" onclick="submitRecipe('sallad2000')">
+          <span>🥗</span><span>@sallad2000</span>
+        </button>
+        <button type="button" class="quick-btn" onclick="submitRecipe('proteinkaka')">
+          <span>🍰</span><span>@proteinkaka</span>
+        </button>
+        <button type="button" class="quick-btn" onclick="submitRecipe('keso/kvargfrukost')">
+          <span>🥣</span><span>@keso/kvargfrukost</span>
+        </button>
+      </div>
 
+      <label for="mealInput">Måltid</label>
+      <textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden eller använd en @kod…" rows="3"></textarea>
 
-<textarea id="mealInput" name="meal" autofocus placeholder="Beskriv måltiden..." rows="3"></textarea>
-<button type="button" onclick="sendMeal()">Logga</button>
+      <button type="button" class="primary-btn" onclick="sendMeal()">Logga</button>
 
-<div id="msg">✔️ Måltid loggad!</div>
+      <div id="msg">✔️ Måltid loggad!</div>
+    </div>
 
-<script>
+    <div class="footer">
+      Skickas till Make → Google Sheets → Dashboard.
+    </div>
+  </div>
 
-const webhookURL = "https://hook.eu1.make.com/vrjzc3t5peepxuhbn8s4lm6ge8styvqi";
+  <script>
+    const webhookURL = "https://hook.eu1.make.com/vrjzc3t5peepxuhbn8s4lm6ge8styvqi";
 
-function showMessage() {
-  document.getElementById('msg').style.display = "block";
-  setTimeout(() => document.getElementById('msg').style.display = "none", 2000);
-}
+    function showMessage() {
+      const msg = document.getElementById('msg');
+      msg.style.display = "block";
+      setTimeout(() => msg.style.display = "none", 2000);
+    }
 
-function sendMeal() {
-  const meal = document.getElementById('mealInput').value.trim();
-  if (meal === "") return;
-  fetch(webhookURL, {
-    method: "POST",
-    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-    body: "meal=" + encodeURIComponent(meal)
-  }).then(() => {
-    document.getElementById('mealInput').value = "";
-    showMessage();
-  });
-}
+    function sendMeal() {
+      const input = document.getElementById('mealInput');
+      const meal = input.value.trim();
+      if (meal === "") return;
 
-function submitRecipe(code) {
-  document.getElementById('mealInput').value = '@' + code;
-}
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "meal=" + encodeURIComponent(meal)
+      }).then(() => {
+        input.value = "";
+        showMessage();
+      }).catch(() => {
+        // om du vill kan vi lägga till felmeddelande här senare
+      });
+    }
 
-
-</script>
+    function submitRecipe(code) {
+      document.getElementById('mealInput').value = '@' + code;
+    }
+  </script>
 
 </body>
 </html>
-
-
