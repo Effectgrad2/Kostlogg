@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kostdashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100vh;
+    }
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 16px 32px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 4px;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+    .date {
+      font-size: 0.95rem;
+      color: #e5e7eb;
+      margin-bottom: 12px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+    .card.full {
+      grid-column: 1 / -1;
+    }
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .value {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .value.small {
+      font-size: 1.05rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: rgba(34,197,94,0.12);
+      color: #4ade80;
+      margin-top: 4px;
+    }
+    .chip.bad {
+      background: rgba(248,113,113,0.12);
+      color: #f97373;
+    }
+    .footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Kostdashboard</h1>
+    <div class="subtitle">Dagens status från din kostlogg</div>
+    <div class="date" id="date">Laddar datum…</div>
+
+    <div class="cards">
+      <div class="card full">
+        <div class="label">Kalorier idag</div>
+        <div class="value" id="kcal">–</div>
+        <div class="chip" id="kcalChip">Laddar…</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Protein idag (g)</div>
+        <div class="value" id="protein">–</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Fett idag (g)</div>
+        <div class="value" id="fat">–</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Kolhydrater idag (g)</div>
+        <div class="value" id="carbs">–</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Kalori-underskott / överskott</div>
+        <div class="value small" id="calorie_diff">–</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Kvar till proteinmål (g)</div>
+        <div class="value small" id="protein_left">–</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Data hämtas från Google Sheets (MobilDashboard).
+    </div>
+  </div>
+
+  <script>
+    // 1. KLIStra in din CSV-URL här:
+    const CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vSLAGj8FgoExWz5exPklNPaBFvj72TAb3WSud7Raqmxfs7Ue7sCBSPeHWNK0fNY8eFmdmw4nAuGaTX0/pub?gid=137222267&single=true&output=csv;
+
+    // 2. Hämtar nyckel/värde-CSV (som du har: kolumn A = nyckel, kolumn B = värde)
+    async function loadData() {
+      try {
+        const res = await fetch(CSV_URL);
+        if (!res.ok) throw new Error("Nätverksfel");
+        const text = await res.text();
+
+        const lines = text.trim().split("\n");
+        const data = {};
+
+        lines.forEach(line => {
+          const [rawKey, ...rest] = line.split(",");
+          const key = (rawKey || "").trim();
+          const value = rest.join(",").trim();
+          if (key) data[key] = value;
+        });
+
+        // Hjälpfunktion för att städa tal som "2 245" eller "−255"
+        function cleanNumber(str) {
+          if (!str) return null;
+          return parseFloat(
+            str.replace(/\s/g, "").replace(",", ".")
+          );
+        }
+
+        // Sätt värden i UI
+        document.getElementById("date").textContent = data.date || "–";
+        document.getElementById("kcal").textContent = data.kcal || "–";
+        document.getElementById("protein").textContent = data.protein || "–";
+        document.getElementById("fat").textContent = data.fat || "–";
+        document.getElementById("carbs").textContent = data.carbs || "–";
+        document.getElementById("calorie_diff").textContent = data.calorie_diff || "–";
+        document.getElementById("protein_left").textContent = data.protein_left || "–";
+
+        // Enkel logik för kalorichippet
+        const kcalChip = document.getElementById("kcalChip");
+        const diff = cleanNumber(data.calorie_diff);
+        if (diff === null || isNaN(diff)) {
+          kcalChip.textContent = "–";
+          kcalChip.classList.remove("bad");
+        } else if (diff < -100) {
+          kcalChip.textContent = "Kaloriunderskott (bra)";
+          kcalChip.classList.remove("bad");
+        } else if (diff > 100) {
+          kcalChip.textContent = "Kaloriöverskott";
+          kcalChip.classList.add("bad");
+        } else {
+          kcalChip.textContent = "Ungefär på målet";
+          kcalChip.classList.remove("bad");
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById("date").textContent = "Kunde inte ladda data";
+        document.getElementById("kcalChip").textContent = "Fel vid hämtning";
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
+
